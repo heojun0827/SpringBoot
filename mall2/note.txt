@@ -1,0 +1,76 @@
+
+JAP : Java Persistence API
+	  	ㄴ Java ORM API 표준
+	  			 ㄴ Object Relational Mapping
+	  			 	객체와 관계형 데이터베이스 Mapping
+	  			 	  ㄴ JAVA Object(class)
+	  			 	  		ㄴ Entity class
+	  			 	  		
+	  			 	  	
+		JAVA Object(Entity class) <--> ORM <--> 관계형 데이터베이스
+		
+												Persistence Context
+												
+	Entity			Entity Manager		-->		Entity 		Entity
+	Manager -->
+	Factory			Entity Manager		-->		Entity 		Entity
+	
+	Entity : database 의 table 에 대응하는 class
+			 @Entity 어노테이션을 붙임
+			 
+	Entity Manager Factory : Entity Manager instance 를 생성, 관리함
+							 Application(프로젝트) 을 실행하면 하나가 만들어짐
+							 client 로부터 request 가 들어오면
+							 Entity Manager Factory 가 Entity Manager 를 생성함
+	
+	Entity Manager : Persistence Context(영속성 컨텍스트)에 접근해서
+					 Entity 를 대상으로 database 작업을 처리함
+					 
+					 
+					 Persistence Context(영속성 컨텍스트)
+					 
+					 1차 cache
+					 @Id Entity					item2 라는 Entity 가
+	item2 을 얻고자	 1L	 item1					1차 cache 에 저장되지 않은 경우
+	2L 로 조회함	 2L	 item2					DataBase 에서 조회함
+	
+	1차 cache 에서		item2 라는 Entity 를								DataBase
+	item2를 반환함		DataBase 에서 조회해서
+						1차 cache 에 저장함
+						
+	1차 cache : item(Entity)을 영속성 컨텍스트에 Map<Key, Value> 형태로 저장
+				조회시에는 find() 메소드를 호출함
+				
+		ㄴ 동일한 transaction 에서 Key 값이 같은 경우네는
+			동일한 Entity 임을 보장해 줌 <-- 동일성 보장
+			
+	database 초기화 DDL AUTO Option
+	
+	spring.jpa.hibernate.ddl-auto=create
+	
+	create : 기존 table 삭제한 후, 새 table 생성
+	none : 사용하지 않음
+	create-drop : 기존 table 삭제한 후, 새 table 생성 / 종료할 때 table 삭제
+	update : 변경된 내용만 반영
+	validate : Entity 와 table 이 정상적으로 Mapping 되었는지 확인함
+	
+	Query Method 이름 형식]
+				r 생략할 수 있음
+		find(EntityClass이름)By(멤버변수이름-DB의컬럼)
+		
+	Query Method 를 호출하려면
+	JpaRepository 인터페이스를 extends 하는 인터페이스를 작성해야함
+	
+	@Transactional 롤백해줌				
+	
+	@Query 어노테이션
+		ㄴ Query Method 에 붙임
+		   JPQL(Java Persistence Query Language)을 작성할 수 있음
+		   
+	Querydsl
+		ㄴ JPQL 을 java code 로 작성할 수 있도록 도와주는 API
+		   java code 로 작성하기 때문에 compile 시에 오류를 발견할 수 있음
+		   동적으로 query 를 생성할 수 있음
+
+mave repository > querydsl-jpa / querydsl-apt
+					 
