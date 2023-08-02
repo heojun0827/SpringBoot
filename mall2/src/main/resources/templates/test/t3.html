@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h2>상품 목록</h2>
+	<table>
+		<thead>
+			<tr><td>상품번호</td><td>상품이름</td><td>상세설명</td><td>상품가격</td><td>등록일</td></tr>
+		</thead>
+		<tbody>
+			<tr th:each="itemDto, status : ${itemList}">
+				<td th:if="${status.even}" th:text="${status.index}"></td>
+				<td th:text="${itemDto.itemNm}"></td>
+				<td th:text="${itemDto.itemDetail}"></td>
+				<td th:text="${itemDto.price}"></td>
+				<td th:text="${itemDto.regTime}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div>
+		상품이름 : <span th:text="${itemDto.itemNm}"></span>
+	</div>
+	<div>
+		상세설명 : <span th:text="${itemDto.itemDetail}"></span>
+	</div>
+	<div>
+		상품가격 : <span th:text="${itemDto.price}"></span>
+	</div>
+	<div>
+		상품등록일 : <span th:text="${itemDto.regTime}"></span>
+	</div>
+</body>
+</html>

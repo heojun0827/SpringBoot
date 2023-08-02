@@ -7,19 +7,19 @@ import com.tjoeun.dto.TmpDto;
 
 @RestController
 public class TestController {
-	
+	/*
 	@GetMapping("/")
 	public String home() {
 		return "Spring Boot !!";
 	}
-	
+	*/
 	@GetMapping("/test1")
 	public TmpDto test1() {
 		
 		TmpDto t1 = TmpDto.builder()
-											.name("더조은")
-											.height(179)
-											.build();
+						  .name("더조은")
+						  .height(179)
+						  .build();
 		
 		return t1;
 	}
@@ -28,9 +28,10 @@ public class TestController {
 	public TmpDto test2() {
 		
 		TmpDto t2 = TmpDto.builder()
-											.height(179)
-											.build();
-		
+						  .height(179)
+						  .build();
+
 		return t2;
 	}
+
 }

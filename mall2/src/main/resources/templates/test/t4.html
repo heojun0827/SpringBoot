@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- xmlns=xml네임스페이스 , th=타임리프 -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+   <h2>상품목록</h2>
+   <div>
+      <a th:href="@{/test/t5(name='강아지',height=184)}">name,height를 파라미터로 전달할때 /test/t5</a>
+   </div>
+
+   <h2> 상품 설명 </h2>
+   <table>
+      <thead>
+         <tr>
+            <td>상품번호</td><td>상품이름</td><td>설명</td><td>가격</td><td>등록일</td>
+         </tr>
+      </thead>
+      <tbody>
+         <tr th:each="itemDto,status : ${itemList}">
+            <td th:if="${status.even}" th:text="${status.index+1}" style="color:#f5aa07"></td>
+            <!-- unless는 else이다 -->
+            <td th:unless="${status.even}" th:text="${status.index+1}" style="color:#07f596"></td>
+            <td th:text="${itemDto.itemNm}"></td>
+            <td th:text="${itemDto.itemDetail}"></td>
+            <td th:text="${itemDto.price}"></td>
+            <td th:text="${itemDto.regTime}"></td>
+         </tr>
+      </tbody>
+   
+   </table>
+
+   <hr>
+</body>
+</html>
