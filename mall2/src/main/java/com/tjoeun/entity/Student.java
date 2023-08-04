@@ -13,12 +13,18 @@ public class Student {
 	
 	// primary key
 	@Id
+	// auto encreament
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	// Entity class 의 멤버벼ㄴ수 이름과 table 의 column 이름을 다르게 하는경우
+	// Entity class의 멤버변수 이름과 table 의 column 이름을 다르게 하는 경우
 	@Column(name="name", nullable=false, length=30)
 	// java camel case --> db snake case
 	private String myName;
 	private int myHeight;
+	
+	
+	
+	
+
 }

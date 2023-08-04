@@ -2,13 +2,10 @@ package com.tjoeun.dto;
 
 import java.time.LocalDateTime;
 
-import com.tjoeun.constant.ItemSellStatus;
-
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+
 @Getter @Setter
-@ToString
 public class ItemDto {
 
 	private Long id; // 상품 코드
@@ -21,7 +18,7 @@ public class ItemDto {
 
 	private String itemDetail; // 상품 상세 설명
 
-	private ItemSellStatus itemSellStatus;
+	private String itemSellStatus;  // 판매 상태
 
 	private LocalDateTime regTime; // 등록 시간
 
