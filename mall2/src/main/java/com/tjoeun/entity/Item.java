@@ -25,7 +25,7 @@ import lombok.ToString;
 @Getter @Setter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class Item extends BaseEntity {
 	
 	// primary key
 	@Id
@@ -54,9 +54,6 @@ public class Item {
 	@Enumerated(EnumType.STRING)
 	private ItemSellStatus itemSellStatus;
 		
-  private LocalDateTime regTime;      // 등록 시간
-  
-  private LocalDateTime updateTime;   // 수정 시간
 }
 
 

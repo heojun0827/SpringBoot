@@ -1,5 +1,6 @@
 package com.tjoeun.entity;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,7 +19,7 @@ import lombok.ToString;
 @Getter @Setter
 @ToString
 @NoArgsConstructor
-public class Cart {
+public class Cart extends BaseEntity {
 
 	@Id
 	@Column(name = "cart_id")
@@ -29,7 +30,6 @@ public class Cart {
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "member_id")
   private Member member;
-	
 	
 	
 }

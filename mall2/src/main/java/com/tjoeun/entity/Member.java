@@ -24,7 +24,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends BaseEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +41,7 @@ public class Member {
   // Enum 을 멤버변수로 사용할 수 있도록 해 주는 annotation
 	@Enumerated(EnumType.STRING)
 	private Role role;
-	
+		
 	// SecutiryConfig 클래스에서 
 	// 회원가입할 때 입력한 비밀번호 암호 처리한 것을
 	// DB 에 적용하기

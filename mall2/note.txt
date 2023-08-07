@@ -63,7 +63,28 @@ create-drop : 기존 table 삭제한 후, 새 table 생성 / 종료할 때 table
 update   : 변경된 내용만 반영
 validate : Entity 와 table 이 정상적으로 Mapping 되었는지 확인함   
 
-      
+
+
+Entity Test Class
+
+// Entity 클래스이름과 table 이름을 다르게 하는 경우
+// @Table(name="colleague")
+@Entity
+public class Student {
+	
+	// primary key
+	@Id
+	// auto encreament
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	
+	// Entity class의 멤버변수 이름과 table 의 column 이름을 다르게 하는 경우
+	@Column(name="name", nullable=false, length=30)
+	// java camel case --> db snake case
+	private String myName;
+	private int myHeight;
+	
+	      
                
 Query Method
 
@@ -102,70 +123,284 @@ Spring Security 적용하기
   회원 역할에 따라서 권한을 달리하여
   접근할 수 있는 페이지를 다르게 할 수 있음
   
- 
- 
- 로그인, 로그아웃 기능 구현하기
- 
- 	Spring Security 에서 UserDetailsService 인터페이스를 implements 하는
- 	클래스를 작성해서 로그인 기능을 구현함
- 	
- 	UserDetailsService 인터페이스 DataBase 에서 회원정보를 가져오는 역할을 함
- 	
- 		loadUserByUsername() 메소드를 overriding 해서
- 		회원정보를 조회하고 사용자의 정보와 권한을 갖는
- 		UserDetail 인터페이스를 반환함
- 			ㄴ Spring Security 에서 회원의 정보를 담는 기능을 함
- 			   UserDetailsService 인터페이스를 implements 하는 클래스(User)를 사용함
- 			   													 ㄴ 클래스(User)의 객체를 생성함
   
   
-  연관 관계 매핑
+로그인, 로그아웃 기능 구현하기
+
+  Spring Security 에서 UserDetailSerice 인터페이스를 implements 하는
+  클래스를 작성해서 로그인 기능을 구현함
+  
+  UserDetailsService 인터페이스는 DataBase 에서 회원정보를 가져오는 역할을 함
+  
+    loadUserByUsername() 메소드를 overriding 해서
+    회원정보를 조회하고 사용자의 정보와 권한을 갖는 
+    UserDetail 인터페이스를 반환함
+       ㄴ Spring Security 에서 회원의 정보를 담는 기능을 함
+          UserDetail 인터페이스를 implements 하는 클래스(User)를 사용함
+                                                   ㄴ 클래스(User)의 객체를 생성함
+         
+       
+    
+연관 관계 매핑
   (매핑된 Entity 를 조회할 때 지연로딩 방식과 즉시로딩 방식이 있음)
   
-  즉시로딩 - @OneToOne(fetch=FetchType.EAGER)
-  	ㄴ @OneToOne, @ManyToOne 방식으로 매핑할 때 기본값
-  	ㄴ Entity 를 조회할 때 해당 Entity 와 Mapping 된 Entity 를 한꺼번에 조회함
-  	ㄴ data 를 조회할 때 연관된 모든 객체의 데이터를 모두 다 한꺼번에 조회함
-  	
-  지연로딩 - @OneToMany(fetch=FetchType.LAZY)
- 	ㄴ @OneToMany 방식으로 매핑할 때 기본값
- 	ㄴ 필요한 시점에 연관된 객체(Entity)의 data 를 불러옴(메모리 올림) 
+ 즉시로딩 - @OneToOne(fetch=FetchType.EAGER)
+    ㄴ @OneToOne, @ManyToOne 방식으로 매핑할 때 기본값
+    ㄴ Entity 를 조회할 때 해당 Entity 와 Mapping 된 Entity 를 한꺼번에 조회함
+    ㄴ data 를 조회할 때 연관된 모든 객체의 데이터를 모두 다 한꺼번에 불러옴
+ 
+ 지연로딩 - @OneToMany(fetch=FetchType.LAZY)
+    ㄴ @OneToMany 방식으로 매핑할 때 기본값
+    ㄴ 필요한 시점에 연관된 객체(Entity)의 data 를 불러옴 
+ 
+    
+연관 관계 매핑 종류
+  1) 1 : 1  <--  @OneToOne
+  2) 1 : N  <--  @OneToMany
+  3) N : 1  <--  @ManyToOne
+  4) N : N  <--  @ManyToMany
+  
+연관 관계 매핑 방향
+  1) 단방향
+  2) 양방향
   
   
-  연관 관계 매핑 종류
-  1) 1 : 1 <-- @OneToOne
-  2) 1 : N <-- @OneToMany
-  3) N : 1 <-- @ManyToOne
-  4) N : N <-- @ManyToMany
+N : 1  Mapping
+
+ 장바구니에는 고객이 구매하고자 하는 상품들을 담음
+ 하나의 장바구니에는 여러 개의 상품을 담을 수 있음
+ 하나의 상품은 여러 장바구니에 담겨질 수 있음
   
-  연관 관계 매핑 방향
-  	1) 단방향
-  	2) 양방향
+  
+  장바구니T  -  장바구니상품T  -  상품
+  
+  
+  
+orders 테이블과 order_item 테이블 관계 Mapping 하기
+
+    ┌ 부모 테이블
+  orders 테이블의 orders_id 컬럼(의 값)을 <-- 참조키(reference key)
+  order_item 테이블의 orders_id 컬럼에서 사용하도록 설정함
+    ㄴ 자식 테이블        ㄴ 외래키(foreign key)
+  
+  어떤 상품을 주문한지 알 수 있고
+  주문한 상품이 어떤 주문에 속해 있는지 파악할 수 있음
+  
+  **************************************************************
+    외래키(foreign key)로 양방향 조회를 할 수 있음
+    
+    Entity 클래스(Java code) 작성할 때는 <-- java code 인 경우
+    외래키(foreign key) 를 설정해도 자동으로 양방향 설정이
+    되지 않아서 @ManyToOne 으로 설정한 Entity 의 
+    상대 Entity 에 @OneToMany 설정을 해서 
+    양방향 관계를 맺어줌
+  **************************************************************
+  
+  
+  Controller > Service > Repository > Entity(DB) 
+            (DTO(Service 의 return 값으로 넘어옴)  <--  Entity)   
+            이를 Controller 가 받아서 View 로 전달함 (Model / RequestScope)
+  
+  
+연관 관계 매핑 종류 - N : 1 / 1 : N 양방향 Mapping
+
+  Entity 는 table 과 달라서
+  Entity 를 양방향 연관 관계로 설정하게 되면
+  Entity 객체를 참조하는 것은 두 개인데
+  foreign key 는 하나가 되어서 ㄴ 이 둘 중에
+  어떤 것이 foreign key 를 관리하는지 정해놔야 함
+  
+  연관 관계에서 주인은 foreign key 가 있는 Entity 로 설정함
+  연관 관계의 주인이 foreign key 를 관리함 - 등록 / 수정 / 삭제
+  
+  주인이 아닌 Entity에서는 
+  mappedBy 속성에 연관 관계의 주인을 설정함
+  
+  주인이 아닌 Entity 는 읽기만 가능함
+  
+  
+  <Orders Entity>
+  
+    ┌ One(Orders) - Many(OrderItem)
+    @OneToMany              : 부모(Oders)가 One 이고, 자식(OderItem)이 Many 임  
+    
+    
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL,
+               orphanRemoval = true, fetch = FetchType.LAZY) 
+      
+      
+      영속성 전이와 고아객체(orphan object)
+        ㄴ 영속성전이옵션을 ALL로(cascade = CascadeType.ALL) 설정하고 
+           orphanRemoval옵션을 true로 설정하면 
+           부모 Entity를 통해서 자식 Entity의 생명주기를 조절하게 됨
+           부모 Entity와 자식의 생명주기를 같이 맞추는 경우에 사용함
+           고아객체(orphan object) : 부모 Entity 와 연관 관계가 끊어진 자식 Entity 객체
+           고아객체 제거 설정(orphanRemovel=true) 은 
+           한 부모 관계에서만 사용 가능함 (@OneToOne / @OneToMany 는 가능, @ManyToMany 는 불가능)
+             ㄴ 고아객체 제거 기능 작동은   ┌ 부모(table)가 하나만 있어야 됨
+                참조하는 곳이 하나인 경우(reference key가 하나만 있어야 된다는 의미)에만 가능함 
+                  ㄴ 고아객체 제거 설정(orphanRemovel=true)을
+                     영속성 전이 기능과 같이 사용하면 
+                     부모 Entity 를 통해서 자식 Entity 의 생명 주기를 관리할 수 있음  
+                     
+                     <-- @OneToOne / @OneToMany 에서 orphanRemovel=true 로 설정함
+           
+          
+      mappedBy="order"        : 연관관계에서 주인은 foreign key 가 있는 Entity 가 됨 (여기서는 OderItem) 
+      cascade=CascadeType.ALL : Order Entity (부모)가 삭제될 때 OrderItem Entity (자식) 도 삭제되거나
+      CascadeType               Order Entity (부모)를 저장할 때 Order Entity에 담긴
+      (JPA의 영속성 전이 옵션)  OrderItem Entity (자식) 들도 모두 같이 저장함
+                                ALL 이라고 설정하면 부모 Entity의 영속성 상태 변화를
+                                                    자식 Entity에 모두 전이하게 됨 
+      orphanRemovel=true      : 위의 "영속성 전이와 고아객체(orphan object)" 설명 참조
+      fetch=FetchType.LAZY    :  FetchType.EAGER (즉시 로딩) 를 사용하면
+       (지연 로딩)               사용하지 않는 모든 Entity (연관된 모는 객체)를 
+                                 select 의 컬럼으로 가져오게 되므로
+                                 성능 저하가 발생할 수 있음 <- 지연 로딩을 권장함
+                                 @OneToMany 에서는 fetch=FetchType.LAZY 가 기본값이어서
+                                 별도로 설정하지 않아도 fetch=FetchType.LAZY 으로 동작함
+  
+  
+   
+ N : M Mapping  <-- 실무에서는 사용하지 않음
+ 
+ 관계형 데이터베이스에서는 정규화된 2 개의 table로 
+ 다대다를 표현할 수 없음
+ 
+ 두 table 사이에 연결 table 을 생성해서 다대다 관계를 
+ 일대다 다대일 관계로 설정함
+ 
+ 
+즉시로딩 대신에 지연로딩을 사용함
+ ㄴ 사용하지 않는 Entity 까지 가져오므로
+    성능 저하의 원인이 될 수 있음
+  
+  
+  
+ 각 Entity 에 공통으로 선언되어 있는
+ regTime, updateTime 멤버변수를 관리하는 
+ 공통 클래스 작성하기
+	
+	Item, Order, OrderItem Entity 등에는
+	regTime, updateTime 멤버변수가 공통으로 선언되어 있음
+	
+	Spring JPA 에 있는 Auditing 기능은(Entity 의 생성이나 수정을 감시함)
+	Entity 가 저장(최초 등록)되거나 수정될 때
+	자동으로 등록자, 등록일, 수정자, 수정일이 입력됨
   
 
-	N : 1 Mapping
+@EntityListener :
+  Entity 에서 삽입, 삭제, 수정 조회 등의 작업 전후에
+  특정 작업을 하기 위한 이벤트 처리를 위한 Annotation
+
+JPA에서 제공하는 7가지 Event
+
+@PrePersist  : Persist(insert) 메서드가 호출되기 전에 실행되는 메서드
+@PostPersist : Persist(insert) 메서드가 호출된 후에 실행되는 메서드
+@PreUpdate   : merge 메서드가 호출되기 전에 실행되는 메서드
+@PostUpdate  : merge 메서드가 호출된 후에 실행되는 메서드
+@PreRemove   : Delete 메서드가 호출되기 전에 실행되는 메서드
+@PostRemove  : Delete 메서드가 호출된 후에 실행되는 메서드
+@PostLoad    : Select 작업 직후에 실행되는 메서드
+
+
+@MappedSuperclass
+  : 공통된 매핑 정보가 필요한 경우에 사용하는 Annotation
+	상속관계 매핑은 아님
+	엔티티가 아니라서 테이블과 매핑되지 않음
+	단순히 엔티티가 공통으로 사용하는 매핑 정보를 모으는 역할을 함
+	부모 클래스를 상속 받는 자식 클래스에 매핑 정보만 제공함
+	추상 클래스로 정의해서 직접 객체를 생성하지는 않음
+	주로 등록일, 수정일, 등록한 사람, 수정한 사람 같은 
+	전체 엔티티에서 공통으로 적용하는 정보를 모을 때 사용함
 	
-	장바구니에는 고객이 구매하고자 하는 상품들을 담음
-	하나의 장바구니에는 여러 개의 상품을 담을 수 있음
-	하나의 상품은 여러 장바구니에 담겨질 수 있음
+    @Entity 클래스는 Enity나 @MappedSuperclass로 지정한 클래스만 상속이 가능함
+
+
+modelmapper library
+  ㄴ DTO 와 Entity 객체의 변환을 도와줌
+     다른 클래스의 멤버변수의 자료형과 이름이 같은 경우,
+     getter/setter 를 사용해서 값을 복사해서 객체를 반환함
+       ㄴ 일반적으로 Entity 클래스와 DTO 클래스는 
+          멤버변수의 자료형과 이름을 같게 해서 사용하므로 이를 적용함
+          
+
+상품등록 처리할 때 고려해야 할 내용들     
+  ㄴ data 무결성
+        개체 무결성	: 기본 테이블의 기본키를 구성하는 어떤 속성도 NULL 값이나 중복값을 가질 수 없음
+		참조 무결성	: 외래키 값은 NULL이거나 참조 릴레이션의 기본키 값과 동일해야 함
+		              즉, 릴레이션은 참조할 수 없는 외래키 값을 가질 수 없음
+		도메인 무결성 : 주어진 속성 값이 정의된 도메인에 속한 값이어야 함
+		사용자 정의 무결성 : 속성 값들이 사용자가 정의한 제약조건에 만족되어야 함
+		NULL 무결성	: 릴레이션의 특정 속성 값이 NULL이 될 수 없음
+		고유 무결성	: 릴레이션의 특정 속성에 대해 각 튜플이 갖는 속성값들이 서로 달라야 함
+		키 무결성	: 하나의 릴레이션에는 적어도 하나의 키가 존재해야 함
+		관계 무결성	: 릴레이션에 어느 한 튜플의 삽입 가능 여부 
+		              또는 한 릴레이션과 다른 릴레이션의 튜플들 사이의 관계에 대한 
+		              적절성 여부를 지정한 규정
+     Validation 하기
+     서로 연관된 data 는 같이 check 해야 함
+
+application.properties 파일에 파일 업로드 관련 설정하기
+
+	# 파일 한 개당 최대 사이즈
+	spring.servlet.multipart.maxFileSize=20MB
+	# 요청당 최대 파일 크기
+	spring.servlet.multipart.maxRequestSize=100MB
 	
-	장바구니T - 장바구니상품T - 상품
+	# 이미지를 DB 에 저장할 수 있으나 DB 용량이 너무 커지면
+	# 사이트 전체 속도 저하로 이어지게 되므로 이미지는 local 에 저장함
+	# 상품 이미지 업로드 경로 <- 저장하는 경로
+	itemImgLocation=C:/mall/item_images
+	# 리소스 업로드 경로 <- PC 에서 파일을 찾는 경우(프로젝트에서가 아님)
+	uploadPath=file:///C:/mall/
 	
-	orders 테이블과 order_item 테이블 관계 Mapping 하기
-	
-		r 부모테이블
-	orders 테이블의 orders_id 컬럼(의 값)을 <-- 참조키(reference key)
-	order_item 테이블의 orders_id 컬럼에서 사용하도록 설정함
-		ㄴ 자식 테이블		ㄴ 외래키(foreign key)
-		
-	어떤 상품을 주문한지 알 수 있고
-	주문한 상품이 어떤 주문에 속해 있는지 파악할 수 있음
-	
-	
-	********************************************************
-	외래키 (foreign key)로 양방향 조회를 할 수 있음
-	********************************************************
-	
+	# 기본 batch size 설정
+	spring.jpa.properties.hibernate.default_batch_fetch_size=1000
+
+
+위의 설정을 System 에서 인식하도록
+config 패키지에 WebMvcConfig 클래스를 작성함
+
+    
+파일 업로드 관련 Service 작성하기  
+  ㄴ FileService 클래스
+  
+  
+  
+  < uploadFile() 메소드>
+  
+  파라미터
+  String uploadPath : 파일 업로드할 경로
+  String originalFileName : 파일의 원래 이름
+  byte[] fileData : 업로드 파일 크기
+  
+  
+  UUID : 범용 고유 식별자(universally unique identifier)
+  UUID uuid = UUID.randomUUID()  <--  파일 이름 중복 방지
+                ㄴ 임의의 UUID 를 자동으로 생성함
+  String extension <-- 파일 확장자 : 맨 마지막에 있는 . 다음에 있는 문자열
+  String savedFileName <-- 저장되는 파일 이름 : uuid.toString() + 확장자
+                                                   ㄴ uuid 를 문자열로 변환함
+  String fileUploadFullUrl  <-- 경로(uploadPath) + / + 저장되는 파일 이름(savedFileName)
+  
+  fos.write(fileData);
+     ㄴ FileOutputStream 에 쓰기(write)할 때는
+        파라미터(parameter) 로 ... 아래 세 가지 중 하나를 선택할 수 있음
+        void write(int b)	    매개변수로 전달받은 정수를 문자로 출력
+        void write(byte[] b)	매개변수로 전달받은 배열의 내용을 문자로 출력
+        void write(byte[] b, int off, int len)	
+                              배열의 'off' 인덱스부터 'len' byte만큼 읽어서 문자로 출력
+      
+  
+  
+  
+  
+  
+  
+  
+
+
            
    
    
