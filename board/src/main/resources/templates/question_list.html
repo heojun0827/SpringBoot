@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layout}">
+
+<div layout:fragment="content" class="container my-3">
+  <table class="table">
+    <thead class="table table-dark" style="background-color: #7952b3;">
+      <tr>
+        <th>글번호</th>
+        <th>제  목</th>
+        <th>등록일시</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="question, loop : ${questionList}">
+        <td th:text="${loop.count}">글번호</td>
+        <td>
+          <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+        </td>
+        <td th:text="${#temporals.format(question.createDate,'yyyy-MM-dd HH:mm')}"></td>
+        <!-- <td th:text="${question.createDate}"></td> -->
+      </tr>
+    </tbody>
+  </table>
+  
+  <a th:href="@{/question/create}" class="btn btn-primary">글 쓰 기</a>
+  
+</div> 
+
+
+
+
+
+

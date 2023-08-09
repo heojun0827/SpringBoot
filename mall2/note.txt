@@ -394,6 +394,36 @@ config 패키지에 WebMvcConfig 클래스를 작성함
       
   
   
+상품 조회하기  <-- Querydsl 을 사용
+
+  상품 관리 메뉴로 들어갔을 때
+  상품 조회하도록 하고
+  페이징 기능으로 일정 개수의 상품만 
+  화면에 나오게 하기
+  
+  조회 조건  1) 상품등록일
+             2) 판매상태
+             3) 상품명
+             4) 등록자 아이디
+             
+             
+Querydsl + JPA 같이 사용  :  ItemRepsitory 에서
+                             QuerydslPredicateExecutor<Item> 를 상속함
+                             ItemCustomRepository interface 작성
+      
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   

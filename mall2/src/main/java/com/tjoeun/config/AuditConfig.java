@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-//@EnableJpaAuditing - 감시기능
+// @EnableJpaAuditing : 감시기능
 @Configuration
 @EnableJpaAuditing
 public class AuditConfig {
@@ -14,4 +14,5 @@ public class AuditConfig {
 	public AuditorAware<String> auditorProvider(){
 		return new AuditorAwareImpl();
 	}
+
 }

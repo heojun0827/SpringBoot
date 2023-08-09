@@ -1,10 +1,14 @@
 package com.tjoeun.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tjoeun.dto.ItemFormDto;
+import com.tjoeun.dto.ItemSearchDto;
+import com.tjoeun.entity.Item;
 import com.tjoeun.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
@@ -117,8 +123,21 @@ public class ItemController {
 
 	}
 	
-	@GetMapping("/admin/items")
-	public String itemList() {
+	@GetMapping({"/admin/items", "/admin/items/{page}"})
+	public String itemList(ItemSearchDto itemSearchDto, Model model,
+			                   @PathVariable("page") Optional<Integer> page) {
+		
+		// Pageable : page 정보를 담고 있는 객체
+		Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 4);
+		Page<Item> items  = itemService.getAdminItemPage(itemSearchDto, pageable);
+		
+		model.addAttribute("items", items);
+		model.addAttribute("itemSearchDto", itemSearchDto);
+		
+		// 페이지 최대 사이즈
+		model.addAttribute("maxPage", 5);
+		
+		
 		
 		return "item/itemList";
 	}
