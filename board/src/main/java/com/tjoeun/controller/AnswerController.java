@@ -27,8 +27,8 @@ public class AnswerController {
 	
 	// id <-- Question 의 id
 	@PostMapping("/create/{id}")
-	public String createAnswer(@Valid AnswerFormDto answerFormDto, Model model,
-                             BindingResult result, @PathVariable("id") Long id) {
+	public String createAnswer(@Valid AnswerFormDto answerFormDto, BindingResult result, Model model,
+                              @PathVariable("id") Long id) {
 		
 		Question question = questionService.getQuestionOne(id);
 		
