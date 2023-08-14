@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" >
+<head>
+  <meta charset="UTF-8">
+  <title>Tjoeun</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+</head>
+<body> 
+<div layout:fragment="content" class="container my-3">
+  <div class="my-3 border-bottom">
+    <div>
+      <h4>로 그 인</h4>
+    </div>
+  </div>
+  <form th:action="@{/users/login}" method="post">
+    <!-- error message -->
+    <div th:if="${param.error}">
+      <div class="alert alert-danger">
+        아이디나 비밀번호를 정확하게 입력해 주세요
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="username" class="form-label">사용자ID</label>
+      <input type="text" name="username" id="username"  class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">비밀번호</label>
+      <input type="password" name="password" id="password" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">로 그 인</button>
+  </form>
+</div>
+</body>
+</html>

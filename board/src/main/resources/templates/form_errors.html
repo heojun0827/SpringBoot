@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" >
+      
+<div th:fragment="formErrorsFragment"  class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
+  <div th:each="error : ${#fields.allErrors()}" th:text=${error}></div>
+</div>
+
+</html>

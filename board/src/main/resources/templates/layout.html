@@ -8,6 +8,18 @@
   <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}" >
 </head>
 <body>
+  <!-- 네비게이션바  -->
+  <nav th:replace="~{navbar :: navbar_above}" ></nav>
+  <!-- 기본 템플릿에 삽입되는 내용 -->
   <th:block layout:fragment="content"></th:block>  
+  <!-- Bootstrap JS -->
+  <script th:src="@{/bootstrap.min.js}"></script>
+  <!-- javascript  -->
+  <th:block layout:fragment="script"></th:block>
 </body>
 </html>
+
+
+
+
+

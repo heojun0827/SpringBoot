@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
                 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
                 layout:decorate="~{layout}">
 
@@ -11,8 +12,25 @@
             <div class="card-text" style="white-space: pre-line;" th:text="${question.content}">질문 내용</div>
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${question.users != null}" th:text="${question.users.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
+            </div>
+            <div class="my-3">
+                <a href="javascript:void(0)"  class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/question/vote/${question.id}|}">추천 <span class="badge rounded-pill bg-success" th:text="${#lists.size(question.voter)}"></span></a>
+                <a th:href="@{|/question/modify/${question.id}|}" 
+                   class="btn btn-sm btn-outline-secondary" 
+                   sec:authorize="isAuthenticated()"  
+                   th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}" 
+                   th:text="수정"></a>
+                <a href="javascript:void(0)"  th:data-uri="@{|/question/delete/${question.id}|}"
+                   class="delete btn btn-sm btn-outline-secondary" 
+                   sec:authorize="isAuthenticated()"  
+                   th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}" 
+                   th:text="삭제"></a>
             </div>
         </div>
     </div>
@@ -21,12 +39,31 @@
         th:text="|${#lists.size(question.answerList)} 개의 답변이 등록되어 있습니다|"></h3>
     <!-- 답글 반복 시작 (답글은 여러 개임) -->
     <div class="card my-3" th:each="answer : ${question.answerList}">
+        <a th:id="|answer_${answer.id}|"></a>
         <div class="card-body">
             <div class="card-text" style="white-space: pre-line;" th:text="${answer.content}"></div>
             <div class="d-flex justify-content-end">
                 <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${answer.users != null}" th:text="${answer.users.username}"></span>
+                    </div>
                     <div th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
                 </div>
+            </div>
+           <div class="my-3">
+              <a href="javascript:void(0)"  class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/answer/vote/${answer.id}|}">추천 <span class="badge rounded-pill bg-success" th:text="${#lists.size(answer.voter)}"></span></a>
+              <a th:href="@{|/answer/modify/${answer.id}|}" 
+                 class="btn btn-sm btn-outline-secondary" 
+                 sec:authorize="isAuthenticated()"  
+                 th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}" 
+                 th:text="수정"></a>
+              <a href="javascript:void(0)"  th:data-uri="@{|/answer/delete/${answer.id}|}"
+                 class="delete btn btn-sm btn-outline-secondary" 
+                 sec:authorize="isAuthenticated()"  
+                 th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}" 
+                 th:text="삭제"></a>
+               
             </div>
         </div>
     </div>
@@ -36,12 +73,37 @@
     
     <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerFormDto}" method="post" class="my-3">
       <!-- validation 통과 못했을 때 메세지 출력 -->
-      <div class="alert alert-danger" role="alert" th:if="${#fields.hasAnyErrors()}">
-        <div th:each="error : ${#fields.allErrors()}" th:text=${error}></div>
-      </div>      
-      <textarea th:field="*{content}" rows="10" class="form-control"></textarea>
+      <div th:replace="form_errors :: formErrorsFragment" ></div>     
+      <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+      <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
       <input type="submit" value="답글달기" class="btn btn-primary my-2">
     </form>
 </div>
+<script layout:fragment="script" type="text/javascript">
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element){
+    	element.addEventListener('click', function(){
+    		if(confirm("정말 삭제할까요?")){
+    			location.href=this.dataset.uri;
+    		};
+    	});
+    });
+    const recommend_elements = document.getElementsByClassName("recommend");
+    Array.from(recommend_elements).forEach(function(element){
+    	element.addEventListener('click', function(){
+    		if(confirm("정말 추천할까요?")){
+    			location.href=this.dataset.uri;
+    		};
+    	});
+    });
+</script>
 </html>
+
+
+
+
+
+
+
+
 

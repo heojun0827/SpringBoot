@@ -1,0 +1,99 @@
+
+question_detail.html 에서 삭제 button 부분
+
+    <a th:href="javascript:void(0)"  th:data-uri="@{|/question/delete/%{question.id}|}"
+       class="delete btn btn-sm btn-outline-secondary" 
+       sec:authorize="isAuthenticated()"  
+       th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}" 
+       th:text="삭제"></a>
+
+<script layout:fragment="script" type="text/javascript">
+    const delete_elements = document.getElementByClassName("delete");
+    Array.from(delete_elements).forEach(function(element){
+    	element.addEventListener('click', function(){
+    		if(confirm("정말 삭제할까요?")){
+    			location.href=this.dataset.uri;
+    		};
+    	});
+    });
+</script>
+       
+       
+th:href="javascript:void(0)" <-- 바로 controller 로 넘어가지 않고
+                                 삭제할 때 정말로 삭제할까요? 라는 popup을 뛰우기 위함
+                                 (javascript)
+                                  
+th:data-uri=  <--  controller 로 이동할 url pattern 지정
+ 
+class="delete  <-- 삭제 버튼이 눌리는 이벤트가 확인되도록 설정함
+          ㄴ javascript 함수에서 인식하기 위함
+          
+          
+                         
+                         
+추천 기능 추가
+
+Question Entity 에 
+@ManyToMany
+Set<User> voter 멤버변수 추가하기
+  ㄴ question_voter 테이블이 추가되고
+      ㄴ question_question_id,
+         voter_user_id
+          ㄴ 두 컬럼이 생성됨
+
+
+Answer Entity 에 
+@ManyToMany
+Set<User> voter 멤버변수 추가하기
+  ㄴ answer_voter 테이블이 추가되고
+      ㄴ answer_answer_id,
+         voter_user_id
+          ㄴ 두 컬럼이 생성됨
+
+
+question_detail.html 에 질문추천 버튼 만들기
+
+
+답변 작성이나 수정시 앵커태그로 이동하기
+  ㄴ 답변 작성이나 수정시 이동할 앵커태그 추가하기
+       ㄴ  <a th:id="|answer_#{answer_id}|"></a>
+
+
+검색 기능
+
+
+ 익명 클래스 - 이름이 없는 클래스
+               익명 클래스를 정의하는 코드가 
+               익명 클래스의 객체를 생성하는 코드
+ 
+부모클래스이름 참조변수 =  new 부모클래스이름(){
+						     익명 클래스의 내용
+						   }
+
+
+QuestionService 의 search 메소드 설명
+
+Root<Question> question - 
+Root, 즉 기준을 의미하는 Question 엔티티의 객체 (질문 제목과 내용을 검색하기 위해 필요)
+
+Join<Question, Users> qu - 
+Question 엔티티와 Users 엔티티를 아우터 조인(JoinType.LEFT)하여 만든 Users 엔티티의 객체. 
+Question 엔티티와 Users 엔티티는 users 속성으로 연결되어 있기 때문에 
+question.join("users")와 같이 조인해야 한다. (질문 작성자를 검색하기 위해 필요)
+
+Join<Question, Answer> qa -
+Question 엔티티와 Answer 엔티티를 아우터 조인(JoinType.LEFT)하여 만든 Answer 엔티티의 객체. 
+Question 엔티티와 Answer 엔티티는 answerList 속성으로 연결되어 있기 때문에 
+question.join("answerList")와 같이 조인해야 한다. (답변 내용을 검색하기 위해 필요)
+
+Join<Answer, Users> au - 
+qa 객체와 다시 한번 Users 엔티티와 아우터 조인(JoinType.LEFT)하여 만든 Users 엔티티의 객체 
+(답변 작성자를 검색하기 위해서 필요)
+
+
+
+
+
+
+
+                              

@@ -9,8 +9,8 @@ import lombok.ToString;
 @Getter @Setter
 @ToString
 public class AnswerFormDto {
-	
-	@NotEmpty(message="답변 내용은 반드시 입력해주세요")
+
+	@NotEmpty(message="답변 내용은 반드시 입력해 주세요")
 	private String content;
 	
 }
