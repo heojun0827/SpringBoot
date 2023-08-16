@@ -90,7 +90,12 @@ Join<Answer, Users> au -
 qa 객체와 다시 한번 Users 엔티티와 아우터 조인(JoinType.LEFT)하여 만든 Users 엔티티의 객체 
 (답변 작성자를 검색하기 위해서 필요)
 
+댓글 달기
 
+Comment Entity 작성
+댓글을 수정하거나 삭제한 후 질문 상세페이지로 리다이렉트할 때
+질문글의 id 를 갖고 이동해야 해당 질문 상세페이지가 열림
+	ㄴ 
 
 
 
