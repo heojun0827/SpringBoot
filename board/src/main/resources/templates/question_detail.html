@@ -1,146 +1,153 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout}">
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout}">
 
 <div layout:fragment="content" class="container my-3">
-	<!-- 질문 -->
-	<h2 class="border-bottom py-2" th:text="${question.subject}">질문 제목</h2>
-	<div class="card my-3">
-		<div class="card-body">
-			<div class="card-text" style="white-space: pre-line;"
-				th:text="${question.content}">질문 내용</div>
-			<div class="d-flex justify-content-end">
-				<div class="badge bg-light text-dark p-2 text-start">
-					<div class="mb-2">
-						<span th:if="${question.users != null}"
-							th:text="${question.users.username}"></span>
-					</div>
-					<div
-						th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-				</div>
-			</div>
-			<div class="my-3">
-				<a href="javascript:void(0)"
-					class="recommend btn btn-sm btn-outline-secondary"
-					th:data-uri="@{|/question/vote/${question.id}|}">추천 <span
-					class="badge rounded-pill bg-success"
-					th:text="${#lists.size(question.voter)}"></span></a> <a
-					th:href="@{|/question/modify/${question.id}|}"
-					class="btn btn-sm btn-outline-secondary"
-					sec:authorize="isAuthenticated()"
-					th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}"
-					th:text="수정"></a> <a href="javascript:void(0)"
-					th:data-uri="@{|/question/delete/${question.id}|}"
-					class="delete btn btn-sm btn-outline-secondary"
-					sec:authorize="isAuthenticated()"
-					th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}"
-					th:text="삭제"></a>
-			</div>
-		</div>
-	</div>
-	<!-- 답글의 갯수 표시 -->
-	<h3 class="border-bottom my-3 py-2"
-		th:text="|${#lists.size(question.answerList)} 개의 답변이 등록되어 있습니다|"></h3>
-	<!-- 답글 반복 시작 (답글은 여러 개임) -->
-	<div class="card my-3" th:each="answer : ${question.answerList}">
-		<a th:id="|answer_${answer.id}|"></a>
-		<div class="card-body">
-			<div class="card-text" style="white-space: pre-line;"
-				th:text="${answer.content}"></div>
-			<div class="d-flex justify-content-end">
-				<div class="badge bg-light text-dark p-2 text-start">
-					<div class="mb-2">
-						<span th:if="${answer.users != null}"
-							th:text="${answer.users.username}"></span>
-					</div>
-					<div
-						th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
-				</div>
-			</div>
-			<div class="my-3">
-				<a href="javascript:void(0)"
-					class="recommend btn btn-sm btn-outline-secondary"
-					th:data-uri="@{|/answer/vote/${answer.id}|}">추천 <span
-					class="badge rounded-pill bg-success"
-					th:text="${#lists.size(answer.voter)}"></span></a> <a
-					th:href="@{|/answer/modify/${answer.id}|}"
-					class="btn btn-sm btn-outline-secondary"
-					sec:authorize="isAuthenticated()"
-					th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}"
-					th:text="수정"></a> <a href="javascript:void(0)"
-					th:data-uri="@{|/answer/delete/${answer.id}|}"
-					class="delete btn btn-sm btn-outline-secondary"
-					sec:authorize="isAuthenticated()"
-					th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}"
-					th:text="삭제"></a>
+  <!-- 질문 -->
+  <h2 class="border-bottom py-2" th:text="${question.subject}">질문
+    제목</h2>
+  <div class="card my-3">
+    <div class="card-body">
+      <div class="card-text" style="white-space: pre-line;"
+        th:text="${question.content}">질문 내용</div>
+      <div class="d-flex justify-content-end">
+        <div class="badge bg-light text-dark p-2 text-start">
+          <div class="mb-2">
+            <span th:if="${question.users != null}"
+              th:text="${question.users.username}"></span>
+          </div>
+          <div
+            th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+        </div>
+      </div>
+      <div class="my-3">
+        <a href="javascript:void(0)"
+          class="recommend btn btn-sm btn-outline-secondary"
+          th:data-uri="@{|/question/vote/${question.id}|}">추천 <span
+          class="badge rounded-pill bg-success"
+          th:text="${#lists.size(question.voter)}"></span></a> <a
+          th:href="@{|/question/modify/${question.id}|}"
+          class="btn btn-sm btn-outline-secondary"
+          sec:authorize="isAuthenticated()"
+          th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}"
+          th:text="수정"></a> <a href="javascript:void(0)"
+          th:data-uri="@{|/question/delete/${question.id}|}"
+          class="delete btn btn-sm btn-outline-secondary"
+          sec:authorize="isAuthenticated()"
+          th:if="${question.users != null and #authentication.getPrincipal().getUsername() == question.users.username}"
+          th:text="삭제"></a>
+      </div>
+      
+      <!-- 질문글에 대한 댓글 -->
+      <div class="mt-3"
+        th:if="${not #lists.isEmpty(question.commentList)}">
+        <div th:each="comment,index : ${question.commentList}"
+          class="comment py-2 text-muted">
+          <span style="white-space: pre-line;"
+            th:text="${comment.content}"></span> <span
+            th:if="${comment.modifyDate != null}"
+            th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')} (수정: ${#temporals.format(comment.modifyDate, 'yyyy-MM-dd HH:mm')})|"></span>
+          <span th:if="${comment.modifyDate == null}"
+            th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}|"></span>
+          <a sec:authorize="isAuthenticated()"
+            th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
+            th:href="@{|/comment/modify/${comment.id}|}" class="small">수정</a>
+          <a sec:authorize="isAuthenticated()"
+            th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
+            href="javascript:void(0);" class="small delete"
+            th:data-uri="@{|/comment/delete/${comment.id}|}">삭제</a>
+        </div>
+      </div>
+      <div>
+        <a th:href="@{|/comment/create/question/${question.id}|}"
+          class="small"><small>댓글 추가</small></a>
+      </div>
+      
+    </div>
+  </div>
+  <!-- 답글의 갯수 표시 -->
+  <h3 class="border-bottom my-3 py-2"
+    th:text="|${#lists.size(question.answerList)} 개의 답변이 등록되어 있습니다|"></h3>
+  <!-- 답글 반복 시작 (답글은 여러 개임) -->
+  <div class="card my-3" th:each="answer : ${question.answerList}">
+    <a th:id="|answer_${answer.id}|"></a>
+    <div class="card-body">
+      <div class="card-text" style="white-space: pre-line;"
+        th:text="${answer.content}"></div>
+      <div class="d-flex justify-content-end">
+        <div class="badge bg-light text-dark p-2 text-start">
+          <div class="mb-2">
+            <span th:if="${answer.users != null}"
+              th:text="${answer.users.username}"></span>
+          </div>
+          <div
+            th:text="${#temporals.format(answer.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+        </div>
+      </div>
+      <div class="my-3">
+        <a href="javascript:void(0)"
+          class="recommend btn btn-sm btn-outline-secondary"
+          th:data-uri="@{|/answer/vote/${answer.id}|}">추천 <span
+          class="badge rounded-pill bg-success"
+          th:text="${#lists.size(answer.voter)}"></span></a> <a
+          th:href="@{|/answer/modify/${answer.id}|}"
+          class="btn btn-sm btn-outline-secondary"
+          sec:authorize="isAuthenticated()"
+          th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}"
+          th:text="수정"></a> <a href="javascript:void(0)"
+          th:data-uri="@{|/answer/delete/${answer.id}|}"
+          class="delete btn btn-sm btn-outline-secondary"
+          sec:authorize="isAuthenticated()"
+          th:if="${answer.users != null and #authentication.getPrincipal().getUsername() == answer.users.username}"
+          th:text="삭제"></a>
 
-			</div>
+      </div>
 
-			<!-- 질문글에 대한 댓글 -->
-			<div class="mt-3" th:if="${not #lists.isEmpty(question.commentList)}">
-				<div th:each="comment,index : ${question.commentList}"
-					class="comment py-2 text-muted">
-					<span style="white-space: pre-line;" th:text="${comment.content}"></span>
-					<span th:if="${comment.modifyDate != null}"
-						th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')} (수정: ${#temporals.format(comment.modifyDate, 'yyyy-MM-dd HH:mm')})|"></span>
-					<span th:if="${comment.modifyDate == null}"
-						th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}|"></span>
-					<a sec:authorize="isAuthenticated()"
-						th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
-						th:href="@{|/comment/modify/${comment.id}|}" class="small">수정</a>,
-					<a sec:authorize="isAuthenticated()"
-						th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
-						href="javascript:void(0);" class="small delete"
-						th:data-uri="@{|/comment/delete/${comment.id}|}">삭제</a>
-				</div>
-			</div>
-			<div>
-				<a th:href="@{|/comment/create/question/${question.id}|}"
-					class="small"><small>댓글 추가 ..</small></a>
-			</div>
-			
-			         <!-- 답글에 대한 댓글 -->
-         <div class="mt-3" th:if="${not #lists.isEmpty(answer.commentList)}">
-            <div th:each="comment,index : ${answer.commentList}"
-               class="comment py-2 text-muted">
-               <span style="white-space: pre-line;" th:text="${comment.content}"></span>
-               <span th:if="${comment.modifyDate != null}"
-                  th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')} (수정: ${#temporals.format(comment.modifyDate, 'yyyy-MM-dd HH:mm')})|"></span>
-               <span th:if="${comment.modifyDate == null}"
-                  th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}|"></span>
-               <a sec:authorize="isAuthenticated()"
-                  th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
-                  th:href="@{|/comment/modify/answer/${comment.id}|}" class="small">수정</a>,
-               <a sec:authorize="isAuthenticated()"
-                  th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
-                  href="javascript:void(0);" class="small delete"
-                  th:data-uri="@{|/comment/delete/answer/${comment.id}|}">삭제</a>
-            </div>
-         </div>
-         <div>
-            <a th:href="@{|/comment/create/answer/${answer.id}|}"
-               class="small"><small>댓글 추가 ..</small></a>
-         </div>
+      <!-- 답글에 대한 댓글 -->
+      <div class="mt-3"
+        th:if="${not #lists.isEmpty(answer.commentList)}">
+        <div th:each="comment,index : ${answer.commentList}"
+          class="comment py-2 text-muted">
+          <span style="white-space: pre-line;"
+            th:text="${comment.content}"></span> <span
+            th:if="${comment.modifyDate != null}"
+            th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')} (수정: ${#temporals.format(comment.modifyDate, 'yyyy-MM-dd HH:mm')})|"></span>
+          <span th:if="${comment.modifyDate == null}"
+            th:text="| - ${comment.users.username}, ${#temporals.format(comment.createDate, 'yyyy-MM-dd HH:mm')}|"></span>
+          <a sec:authorize="isAuthenticated()"
+            th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
+            th:href="@{|/comment/modify/${comment.id}|}" class="small">수정</a>
+          <a sec:authorize="isAuthenticated()"
+            th:if="${#authentication.getPrincipal().getUsername() == comment.users.username}"
+            href="javascript:void(0);" class="small delete"
+            th:data-uri="@{|/comment/delete/${comment.id}|}">삭제</a>
+        </div>
+      </div>
+      <div>
+        <a th:href="@{|/comment/create/answer/${answer.id}|}" class="small"><small>댓글 추가</small></a>
+      </div>
 
 
-		</div>
-	</div>
-	<!-- 답글 반복 종료 -->
 
-	<!-- 답글 작성하기 -->
 
-	<form th:action="@{|/answer/create/${question.id}|}"
-		th:object="${answerFormDto}" method="post" class="my-3">
-		<!-- validation 통과 못했을 때 메세지 출력 -->
-		<div th:replace="form_errors :: formErrorsFragment"></div>
-		<textarea sec:authorize="isAnonymous()" disabled th:field="*{content}"
-			class="form-control" rows="10"></textarea>
-		<textarea sec:authorize="isAuthenticated()" th:field="*{content}"
-			class="form-control" rows="10"></textarea>
-		<input type="submit" value="답글달기" class="btn btn-primary my-2">
-	</form>
+    </div>
+  </div>
+  <!-- 답글 반복 종료 -->
+
+  <!-- 답글 작성하기 -->
+
+  <form th:action="@{|/answer/create/${question.id}|}"
+    th:object="${answerFormDto}" method="post" class="my-3">
+    <!-- validation 통과 못했을 때 메세지 출력 -->
+    <div th:replace="form_errors :: formErrorsFragment"></div>
+    <textarea sec:authorize="isAnonymous()" disabled
+      th:field="*{content}" class="form-control" rows="10"></textarea>
+    <textarea sec:authorize="isAuthenticated()" th:field="*{content}"
+      class="form-control" rows="10"></textarea>
+    <input type="submit" value="답글달기" class="btn btn-primary my-2">
+  </form>
 </div>
 <script layout:fragment="script" type="text/javascript">
     const delete_elements = document.getElementsByClassName("delete");

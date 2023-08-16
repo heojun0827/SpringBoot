@@ -12,14 +12,15 @@ import com.tjoeun.entity.Users;
 import com.tjoeun.repository.CommentRepository;
 
 import lombok.RequiredArgsConstructor;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-	
+  
 	private final CommentRepository commentRepository;
 	
-	public Comment create(Question question, Users users, Answer answer, String content) {
-	
+	public Comment create(Question question, Users users, String content) {
+		
 		Comment c = new Comment();
 		c.setContent(content);
 		c.setCreateDate(LocalDateTime.now());
@@ -30,24 +31,34 @@ public class CommentService {
 		return c;
 	}
 	
-	public Optional<Comment> getComment(Long id){
-		return commentRepository.findById(id);
-	}
-	
-	public Comment modify(Comment c, String content) {
+  public Comment create(Answer answer, Users users, String content) {
+		
+		Comment c = new Comment();
 		c.setContent(content);
-		c.setModifyDate(LocalDateTime.now());
+		c.setCreateDate(LocalDateTime.now());
+		c.setAnswer(answer);
+		c.setUsers(users);
 		c = commentRepository.save(c);
+		
 		return c;
 	}
+
 	
-	public void delete(Comment c) {
-		commentRepository.delete(c);
-	}
-	
+  public Optional<Comment> getComment(Long id){
+  	return commentRepository.findById(id);
+  }
+  
+  public Comment modify(Comment c, String content) {
+  	c.setContent(content);
+  	c.setModifyDate(LocalDateTime.now());
+  	c = commentRepository.save(c);
+  	return c;
+  }
+  
+  public void delete(Comment c) {
+  	commentRepository.delete(c);
+  }
+  
 	
 }
-
-
-
 

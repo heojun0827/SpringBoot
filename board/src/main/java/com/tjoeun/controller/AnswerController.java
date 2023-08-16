@@ -53,7 +53,7 @@ public class AnswerController {
 		// 불러온 question entity 에 대한 답변(answer) 저장하기
 		Answer answer = answerService.createAnswer(question, answerFormDto.getContent(), users);
 		
-		return String.format("redirect:/question/detail/%s#answer_%s", id, answer.getId());
+		return String.format("redirect:/question/detail/%s/#answer_%s", id, answer.getId());
 	}
 	
   // 수정
